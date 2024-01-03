@@ -1,12 +1,25 @@
 package org.algo;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.Future;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class UserMenu {
     private final Scanner sc = new Scanner(System.in);
     private Hotel hotel;
+    private int guestCount = 5;
+    private int hotelRooms = 2;
+    private int cleanUpTime = 2;
+    private int averageStay = 100;
 
-    public void startMenu() {
+    public UserMenu() {
+        this.hotel = new Hotel(hotelRooms);
+    }
+
+    public void startMenu() throws InterruptedException {
         boolean isContinue = true;
         String menu = """
                     ┌───────────────────────────────────────────────────────────┐
@@ -44,7 +57,32 @@ public class UserMenu {
             switch (choice) {
                 case 1 -> {
                     System.out.println("1 - 📜 Start");
+                    List<Future> futureList = IntStream.range(0, guestCount)
+                            .mapToObj(i -> new Guest(i))
+                            .map(guest -> hotel.checkIn(guest)).collect(Collectors.toList());
 
+
+
+                    boolean areAllDone = false;
+
+
+                    while (!areAllDone){
+                        Iterator<Future> iterator = futureList.iterator();
+                        while(iterator.hasNext()) {
+                            Future future = iterator.next();
+
+                            if (!future.isDone()) {
+                                areAllDone = false;
+                            } else {
+                                hotel.checkOut();
+                                iterator.remove();
+                                areAllDone = true;
+                            }
+                        }
+                        Thread.sleep(500);
+                    }
+                    System.out.println("test");
+                    hotel.shutdown();
                 }
                 case 2 -> {
                     System.out.println("2 - 📜 Set guest count");
