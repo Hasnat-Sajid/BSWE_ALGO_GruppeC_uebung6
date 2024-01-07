@@ -8,10 +8,10 @@ import java.util.stream.IntStream;
 public class UserMenu {
     private final Scanner sc = new Scanner(System.in);
     private Hotel hotel;
-    private int guestCount = 5;
-    private int hotelRooms = 2;
+    private int guestCount = 15;
+    private int hotelRooms = 10;
     private int cleanUpTime = 2;
-    private int stayTime = 3;
+    private int stayTime = 60;
 
     /**
      * Displays a menu with options for starting the application, setting guest count,
@@ -22,7 +22,7 @@ public class UserMenu {
         boolean isContinue = true;
         String menu = """
                     ┌───────────────────────────────────────────────────────────┐
-                                      Welcome to our ADT solution!
+                                  Welcome to our Threads-Hotel solution!
                                          Group C - Exercise 6
                     └───────────────────────────────────────────────────────────┘
                                       Current guest count: %d

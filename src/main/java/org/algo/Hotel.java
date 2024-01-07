@@ -48,8 +48,6 @@ public class Hotel {
         if (checkedInGuests.contains(guest)) {
             counter--;
             checkedInGuests.remove(guest);
-        } else {
-            throw new IllegalStateException("Guest not in the hotel: " + guest.getGuestId());
         }
     }
 
