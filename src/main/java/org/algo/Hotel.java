@@ -1,49 +1,38 @@
 package org.algo;
 
-import java.util.ArrayDeque;
-import java.util.Optional;
-import java.util.Queue;
-import java.util.concurrent.*;
+import java.util.*;
 
 public class Hotel {
 
-    private ExecutorService executorService;
-    private int guestCount;
-    private int availableRooms;
+    private final int rooms;
+    private int counter = 0;
+    private final Set<Guest> checkedInGuests = new HashSet<>();
 
-    private Queue queue;
-
-
-    public Hotel(int availableRooms) {
-        this.executorService = Executors.newFixedThreadPool(availableRooms);
-        this.availableRooms = availableRooms;
-        this.guestCount = 0;
-        this.queue = new ArrayDeque<Guest>();
+    public Hotel(int rooms) {
+        this.rooms = rooms;
     }
 
-    public Future checkIn(Guest guest) {
-        guestCount++;
-        return executorService.submit(() -> {
-            try {
-                guest.start();
-                guest.wait();
-                Thread.sleep(10000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        });
-
-
-
-//        String reslt = future.get();
+    public boolean isRoomFree() {
+        return counter < rooms;
     }
 
-    public void checkOut() {
-        guestCount--;
+
+    public void checkInGuest(Guest guest) {
+        if (isRoomFree()) {
+            ++counter;
+            checkedInGuests.add(guest);
+        }
+    }
+    public void checkOutGuest(Guest guest) {
+        if (checkedInGuests.contains(guest)) {
+            counter--;
+            checkedInGuests.remove(guest);
+        } else {
+            throw new IllegalStateException("Guest not in the hotel: " + guest.getGuestId());
+        }
     }
 
-    public void shutdown() {
-        executorService.shutdown();
+    public Set<Guest> getCheckedInGuests() {
+        return checkedInGuests;
     }
-
 }

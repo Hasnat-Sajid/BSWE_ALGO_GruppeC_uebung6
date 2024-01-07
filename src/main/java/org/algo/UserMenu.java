@@ -1,9 +1,7 @@
 package org.algo;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
-import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -13,23 +11,19 @@ public class UserMenu {
     private int guestCount = 5;
     private int hotelRooms = 2;
     private int cleanUpTime = 2;
-    private int averageStay = 100;
+    private int stayTime = 3;
 
-    public UserMenu() {
-        this.hotel = new Hotel(hotelRooms);
-    }
-
-    public void startMenu() throws InterruptedException {
+    public void startMenu() {
         boolean isContinue = true;
         String menu = """
                     ┌───────────────────────────────────────────────────────────┐
                                       Welcome to our ADT solution!
                                          Group C - Exercise 6
                     └───────────────────────────────────────────────────────────┘
-                                      Current guest count: %s
-                                      Hotel room space: %s
-                                      Clean up time: %s
-                                      Average stay time: %s
+                                      Current guest count: %d
+                                      Hotel room space: %d
+                                      Clean up time: %d seconds
+                                      Average stay time: %d seconds
                     ┌───────────────────────────────────────────────────────────┐
                       1 - 📜 Start
                       2 - 🔑 Set Guest Count
@@ -43,7 +37,7 @@ public class UserMenu {
 
 
         while (isContinue) {
-            System.out.printf(menu, "count", "space", "time", "stay time");
+            System.out.printf(menu, guestCount, hotelRooms, cleanUpTime, stayTime);
             String userInput = sc.nextLine();
             int choice;
 
@@ -57,45 +51,24 @@ public class UserMenu {
             switch (choice) {
                 case 1 -> {
                     System.out.println("1 - 📜 Start");
-                    List<Future> futureList = IntStream.range(0, guestCount)
-                            .mapToObj(i -> new Guest(i))
-                            .map(guest -> hotel.checkIn(guest)).collect(Collectors.toList());
-
-
-
-                    boolean areAllDone = false;
-
-
-                    while (!areAllDone){
-                        Iterator<Future> iterator = futureList.iterator();
-                        while(iterator.hasNext()) {
-                            Future future = iterator.next();
-
-                            if (!future.isDone()) {
-                                areAllDone = false;
-                            } else {
-                                hotel.checkOut();
-                                iterator.remove();
-                                areAllDone = true;
-                            }
-                        }
-                        Thread.sleep(500);
-                    }
-                    System.out.println("test");
-                    hotel.shutdown();
+                    startThreads();
                 }
                 case 2 -> {
                     System.out.println("2 - 📜 Set guest count");
-
+                    System.out.println("Enter the amount of guests that are going to check into the hotel:");
+                    guestCount = getIntegerFromUser();
                 } case 3 -> {
                     System.out.println("3 - 🐓 Set Hotel room space");
-
+                    System.out.println("Enter the amount of rooms that the hotel should have:");
+                    hotelRooms = getIntegerFromUser();
                 } case 4 -> {
                     System.out.println("4 - 🧽 Set clean up time");
-
+                    System.out.println("Enter the amount of seconds that the hotel room should still be occupied after the guest left:");
+                    cleanUpTime = getIntegerFromUser();
                 } case 5 -> {
                     System.out.println("5 - 🍌 Set average stay time");
-
+                    System.out.println("Enter the amount of seconds the guests should stay in their room:");
+                    stayTime = getIntegerFromUser();
                 }
                 case 0 -> isContinue = false;
                 default -> System.out.println("Input not recognized");
@@ -104,7 +77,48 @@ public class UserMenu {
         System.out.println("Bye!");
     }
 
-    public boolean isInteger(String toCheck) {
+    private void startThreads() {
+        this.hotel = new Hotel(hotelRooms);
+
+        List<Guest> guestList = IntStream.range(1, guestCount + 1)
+                .mapToObj((int i) -> new Guest("Guest-" + i, hotel, stayTime, cleanUpTime))
+                .toList();
+
+        List<Guest> allRunningGuests = guestList.stream().map(guest -> {
+            guest.start();
+            return guest;
+        }).collect(Collectors.toList());
+
+        waitForThreads(allRunningGuests);
+    }
+
+
+    private void waitForThreads(List<Guest> guests) {
+        for (Thread thread : guests) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        System.out.println("No guests left in the hotel.");
+    }
+
+    private int getIntegerFromUser() {
+        String input;
+        while (true) {
+            input = sc.nextLine();
+            if (isInteger(input)) {
+                return Integer.parseInt(input);
+            } else {
+                System.out.println("Invalid input. Please enter a valid integer:");
+            }
+        }
+    }
+
+
+    private boolean isInteger(String toCheck) {
         String regex = "^-?\\d+$";
         return toCheck.matches(regex);
     }
