@@ -13,6 +13,11 @@ public class UserMenu {
     private int cleanUpTime = 2;
     private int stayTime = 3;
 
+    /**
+     * Displays a menu with options for starting the application, setting guest count,
+     * hotel room space, clean up time, and average stay time. It processes user input and
+     * executes the corresponding actions.
+     */
     public void startMenu() {
         boolean isContinue = true;
         String menu = """

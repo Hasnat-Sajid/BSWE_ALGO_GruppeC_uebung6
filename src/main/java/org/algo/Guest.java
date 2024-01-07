@@ -4,6 +4,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Represents a guest in a hotel simulation.
+ * Each guest is a thread that checks into and out of a hotel.
+ */
 public class Guest extends Thread {
 
     private final String guestId;
@@ -18,9 +22,12 @@ public class Guest extends Thread {
         this.hotel = hotel;
         this.stayTime = stayTime;
         this.cleanUpTime = cleanUpTime;
-        setName(guestId);
     }
 
+    /**
+     * The main execution method for the guest thread.
+     * Handles the process of checking into the hotel, staying, and checking out.
+     */
     @Override
     public void run() {
         try {
@@ -50,10 +57,21 @@ public class Guest extends Thread {
         }
     }
 
+    /**
+     * Gets the guest's ID.
+     *
+     * @return the guest ID
+     */
     public String getGuestId() {
         return this.guestId;
     }
 
+
+    /**
+     * Prints a given string with a timestamp.
+     *
+     * @param text the text to print with the timestamp
+     */
     private void printStringWithTimestamp(String text) {
         String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
         System.out.printf("Guest with GuestId %s %s %s%n", this.guestId, text, time);
