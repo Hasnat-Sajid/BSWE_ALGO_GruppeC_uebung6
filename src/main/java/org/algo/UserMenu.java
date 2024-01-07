@@ -25,12 +25,12 @@ public class UserMenu {
                                       Clean up time: %d seconds
                                       Average stay time: %d seconds
                     ┌───────────────────────────────────────────────────────────┐
-                      1 - 📜 Start
-                      2 - 🔑 Set Guest Count
-                      3 - 🐓 Set Hotel room space
-                      4 - 🧽 Set clean up time
-                      5 - 🍌 Set average stay time
-                      0 - ❌ Exit
+                        1 - 📜 Start
+                        2 - 🔢 Set Guest Count
+                        3 - 🏨 Set Hotel Room Space
+                        4 - 🧹 Set Clean Up Time
+                        5 - ⏳ Set Average Stay Time
+                        0 - ❌ Exit
                     └───────────────────────────────────────────────────────────┘
                     \n
                 """;
@@ -54,19 +54,19 @@ public class UserMenu {
                     startThreads();
                 }
                 case 2 -> {
-                    System.out.println("2 - 📜 Set guest count");
+                    System.out.println("2 - Set guest count");
                     System.out.println("Enter the amount of guests that are going to check into the hotel:");
                     guestCount = getIntegerFromUser();
                 } case 3 -> {
-                    System.out.println("3 - 🐓 Set Hotel room space");
+                    System.out.println("3 - Set Hotel room space");
                     System.out.println("Enter the amount of rooms that the hotel should have:");
                     hotelRooms = getIntegerFromUser();
                 } case 4 -> {
-                    System.out.println("4 - 🧽 Set clean up time");
+                    System.out.println("4 - Set clean up time");
                     System.out.println("Enter the amount of seconds that the hotel room should still be occupied after the guest left:");
                     cleanUpTime = getIntegerFromUser();
                 } case 5 -> {
-                    System.out.println("5 - 🍌 Set average stay time");
+                    System.out.println("5 - Set average stay time");
                     System.out.println("Enter the amount of seconds the guests should stay in their room:");
                     stayTime = getIntegerFromUser();
                 }
